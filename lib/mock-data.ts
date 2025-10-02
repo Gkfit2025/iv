@@ -3,12 +3,12 @@ import type { HostOrganization, Opportunity, Review } from "./types"
 export const hostOrganizations: HostOrganization[] = [
   {
     id: "gkf",
-    name: "GKF (Global Knowledge Foundation)",
+    name: "GKF (Grace Kennett Foundation)",
     description:
-      "Empowering communities through education and sustainable development initiatives across Asia and Africa.",
-    location: "Mumbai, India",
+      "Grace Kennett Foundation empowers communities through education, sustainable development, and social welfare initiatives. Based in Madurai, India, we work to create lasting positive change.",
+    location: "Madurai, India",
     country: "India",
-    logo: "/gkf-logo-education-foundation.jpg",
+    logo: "/gkf-logo.webp",
     coverImage: "/indian-school-children-learning-classroom.jpg",
     rating: 4.8,
     reviewCount: 127,
@@ -46,14 +46,18 @@ export const opportunities: Opportunity[] = [
     hostId: "gkf",
     title: "Teaching English & Life Skills to Underprivileged Children",
     description:
-      "Join our team in Mumbai to teach English, mathematics, and life skills to children from underserved communities. Make a lasting impact on young lives while experiencing Indian culture.",
+      "Join our team in Madurai to teach English, mathematics, and life skills to children from underserved communities. Make a lasting impact on young lives while experiencing Indian culture.",
     theme: ["education", "childcare", "community"],
-    location: "Mumbai, India",
+    location: "Madurai, India",
     country: "India",
     applicantTypes: ["volunteer", "intern"],
     minDuration: 4,
     maxDuration: 24,
-    images: ["/teacher-with-indian-children-classroom.jpg", "/children-learning-english-india.jpg", "/volunteer-teaching-kids-mumbai.jpg"],
+    images: [
+      "/teacher-with-indian-children-classroom.jpg",
+      "/children-learning-english-india.jpg",
+      "/volunteer-teaching-kids-mumbai.jpg",
+    ],
     requirements: [
       "Fluent in English",
       "Patient and enthusiastic about teaching",
@@ -104,7 +108,11 @@ export const opportunities: Opportunity[] = [
     applicantTypes: ["volunteer", "intern"],
     minDuration: 2,
     maxDuration: 12,
-    images: ["/wildlife-researcher-tracking-elephants-africa.jpg", "/maasai-mara-safari-lions.jpg", "/conservation-field-work-kenya.jpg"],
+    images: [
+      "/wildlife-researcher-tracking-elephants-africa.jpg",
+      "/maasai-mara-safari-lions.jpg",
+      "/conservation-field-work-kenya.jpg",
+    ],
     requirements: [
       "Physical fitness for field work",
       "Interest in wildlife biology",
