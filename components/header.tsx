@@ -11,7 +11,7 @@ export function Header() {
           <div className="flex flex-col">
             <span className="text-xl font-bold leading-tight">IV</span>
             <span className="hidden text-xs text-muted-foreground sm:inline leading-tight">
-              International Volunteers
+              Internship & Volunteer Program
             </span>
           </div>
         </Link>
