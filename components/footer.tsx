@@ -51,7 +51,18 @@ export function Footer() {
           {/* GKF Information */}
           <div>
             <h3 className="mb-4 text-sm font-semibold">About GKF</h3>
-            <p className="text-sm text-muted-foreground mb-2">Grace Kennett Foundation</p>
+             <ul className="space-y-2 text-sm">
+              <li>
+              <Link 
+                href="https://gkfmadurai.in/about-us/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
+                  Grace Kennett Foundation
+                </Link>
+              </li>
+              <li>
             <Link
               href="https://gkfmadurai.in/"
               target="_blank"
@@ -61,6 +72,8 @@ export function Footer() {
               <Globe className="h-3 w-3" />
               Visit GKF Website
             </Link>
+            </li>
+          </ul>
           </div>
 
           {/* Social Media Links */}
