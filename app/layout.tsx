@@ -10,7 +10,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "IV - International Volunteers",
+  title: "IV - Interns & Volunteers",
   description: "Connect with meaningful volunteer opportunities around the world",
   generator: "v0.app",
 }

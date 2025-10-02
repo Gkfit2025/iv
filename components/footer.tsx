@@ -13,7 +13,7 @@ export function Footer() {
               <Image src="/gkf-logo.webp" alt="GKF Logo" width={40} height={40} className="h-10 w-10 object-contain" />
               <div>
                 <div className="text-lg font-bold">IV</div>
-                <div className="text-xs text-muted-foreground">International Volunteers</div>
+                <div className="text-xs text-muted-foreground">Interns & Volunteers</div>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
