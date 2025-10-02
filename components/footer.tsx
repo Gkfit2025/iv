@@ -57,7 +57,7 @@ export function Footer() {
                 href="https://gkfmadurai.in/about-us/" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-primary hover:underline flex items-center gap-1"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                   Grace Kennett Foundation
                 </Link>
