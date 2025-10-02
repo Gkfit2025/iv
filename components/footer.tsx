@@ -32,11 +32,16 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/join-ivy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Join IVY
+                  Join IV
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link 
+                href="https://gkfmadurai.in/about-us/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
                   About Us
                 </Link>
               </li>
