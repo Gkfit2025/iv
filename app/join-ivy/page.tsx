@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -37,7 +38,7 @@ export default function JoinIVYPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
 
       {/* Hero Section */}
@@ -53,7 +54,7 @@ export default function JoinIVYPage() {
         </div>
       </section>
 
-      <div className="container py-12">
+      <div className="container py-12 flex-1">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Benefits Section */}
           <div>
@@ -236,6 +237,8 @@ export default function JoinIVYPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

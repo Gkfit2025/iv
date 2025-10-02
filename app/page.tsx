@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Globe, Heart, Users, Award } from "lucide-react"
 
@@ -55,8 +56,8 @@ export default function HomePage() {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Heart className="h-6 w-6 text-primary" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
+                  <Heart className="h-6 w-6 text-secondary" />
                 </div>
                 <h3 className="mb-2 font-semibold">Verified Organizations</h3>
                 <p className="text-sm text-muted-foreground">
@@ -67,8 +68,8 @@ export default function HomePage() {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Users className="h-6 w-6 text-primary" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
+                  <Users className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="mb-2 font-semibold">Community Support</h3>
                 <p className="text-sm text-muted-foreground">Join a community of passionate volunteers worldwide</p>
@@ -105,12 +106,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2025 Internship & Volunteers (IV) Program by GKF. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

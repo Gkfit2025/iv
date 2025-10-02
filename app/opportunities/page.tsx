@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { SearchFilters, type SearchFilters as SearchFiltersType } from "@/components/search-filters"
 import { OpportunityCard } from "@/components/opportunity-card"
 import { opportunities } from "@/lib/mock-data"
@@ -60,10 +61,10 @@ export default function OpportunitiesPage() {
   }, [filters])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
 
-      <div className="container py-8">
+      <div className="container py-8 flex-1">
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold">Find Opportunities</h1>
           <p className="text-muted-foreground">Discover meaningful volunteer experiences around the world</p>
@@ -89,6 +90,8 @@ export default function OpportunitiesPage() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   )
 }

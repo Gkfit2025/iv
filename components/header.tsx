@@ -11,7 +11,7 @@ export function Header() {
           <div className="flex flex-col">
             <span className="text-xl font-bold leading-tight">IV</span>
             <span className="hidden text-xs text-muted-foreground sm:inline leading-tight">
-              Internship & Volunteer Program
+              International Volunteers
             </span>
           </div>
         </Link>
@@ -21,7 +21,7 @@ export function Header() {
             <Button variant="ghost">Find Opportunities</Button>
           </Link>
           <Link href="/join-ivy">
-            <Button variant="default">Host IV</Button>
+            <Button variant="default">Join IVY</Button>
           </Link>
         </nav>
       </div>

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -24,10 +25,10 @@ export default function OpportunityDetailPage({
   const opportunityReviews = reviews.filter((r) => r.opportunityId === opportunity.id)
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
 
-      <div className="container py-8">
+      <div className="container py-8 flex-1">
         {/* Image Gallery */}
         <div className="mb-8 grid gap-4 md:grid-cols-2">
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg md:col-span-2">
@@ -235,6 +236,8 @@ export default function OpportunityDetailPage({
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }
