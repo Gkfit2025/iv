@@ -56,7 +56,7 @@ export default function HomePage() {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <Heart className="h-6 w-6 text-secondary" />
                 </div>
                 <h3 className="mb-2 font-semibold">Verified Organizations</h3>
@@ -68,7 +68,7 @@ export default function HomePage() {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <Users className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="mb-2 font-semibold">Community Support</h3>
