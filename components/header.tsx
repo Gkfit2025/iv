@@ -21,7 +21,7 @@ export function Header() {
             <Button variant="ghost">Find Opportunities</Button>
           </Link>
           <Link href="/join-ivy">
-            <Button variant="default">Join IVY</Button>
+            <Button variant="default">Host IV</Button>
           </Link>
         </nav>
       </div>
