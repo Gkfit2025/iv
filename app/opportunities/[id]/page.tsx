@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MapPin, Clock, Users, Star, CheckCircle2, Gift, ExternalLink, Shield } from "lucide-react"
+import { MapPin, Clock, Users, Star, CheckCircle2, Gift, Shield } from "lucide-react"
 import { opportunities, hostOrganizations, reviews } from "@/lib/mock-data"
+import { createClient } from "@/lib/supabase/server"
 
-export default function OpportunityDetailPage({
+export default async function OpportunityDetailPage({
   params,
 }: {
   params: { id: string }
@@ -23,6 +24,23 @@ export default function OpportunityDetailPage({
 
   const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
   const opportunityReviews = reviews.filter((r) => r.opportunityId === opportunity.id)
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let hasApplied = false
+  if (user) {
+    const { data: existingApplication } = await supabase
+      .from("applications")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("opportunity_id", opportunity.id)
+      .single()
+
+    hasApplied = !!existingApplication
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -221,15 +239,42 @@ export default function OpportunityDetailPage({
                   </div>
                 </div>
 
-                <Link href={opportunity.applicationFormUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="w-full" size="lg">
-                    Apply Now
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                {user ? (
+                  hasApplied ? (
+                    <div className="space-y-2">
+                      <Button className="w-full" size="lg" disabled>
+                        Already Applied
+                      </Button>
+                      <Link href="/dashboard">
+                        <Button variant="outline" className="w-full bg-transparent" size="lg">
+                          View Application
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <Link href={`/opportunities/${opportunity.id}/apply`}>
+                      <Button className="w-full" size="lg">
+                        Apply Now
+                      </Button>
+                    </Link>
+                  )
+                ) : (
+                  <div className="space-y-2">
+                    <Link href="/auth/sign-up">
+                      <Button className="w-full" size="lg">
+                        Sign Up to Apply
+                      </Button>
+                    </Link>
+                    <Link href="/auth/login">
+                      <Button variant="outline" className="w-full bg-transparent" size="lg">
+                        Sign In
+                      </Button>
+                    </Link>
+                  </div>
+                )}
 
                 <p className="mt-4 text-center text-xs text-muted-foreground">
-                  You'll be redirected to our application form
+                  {user ? "Complete the application form" : "Create an account to apply"}
                 </p>
               </CardContent>
             </Card>
