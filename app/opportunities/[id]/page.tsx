@@ -44,7 +44,7 @@ export default async function OpportunityDetailPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header user={user} />
 
       <div className="container py-8 flex-1">
         {/* Image Gallery */}

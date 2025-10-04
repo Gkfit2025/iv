@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -11,8 +11,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Globe, Heart, CheckCircle2 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import type { User } from "@supabase/supabase-js"
 
 export default function JoinIVYPage() {
+  const [user, setUser] = useState<User | null>(null)
   const [formData, setFormData] = useState({
     organizationName: "",
     email: "",
@@ -21,6 +24,13 @@ export default function JoinIVYPage() {
     website: "",
     description: "",
   })
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,7 +49,7 @@ export default function JoinIVYPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header user={user} />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-secondary/10 to-background py-16 md:py-24">
