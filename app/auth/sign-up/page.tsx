@@ -40,8 +40,8 @@ export default function SignUpPage() {
 
     try {
       const redirectUrl = process.env.NEXT_PUBLIC_APP_URL
-        ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
-        : `${window.location.origin}/dashboard`
+        ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+        : `${window.location.origin}/auth/callback`
 
       const { error } = await supabase.auth.signUp({
         email,
