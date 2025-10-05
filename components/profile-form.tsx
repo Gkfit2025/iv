@@ -4,15 +4,14 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import type { User } from "@supabase/supabase-js"
+import type { CurrentUser } from "@stackframe/stack"
 
 interface ProfileFormProps {
-  user: User
+  user: CurrentUser
   profile: {
     full_name: string | null
     phone: string | null
@@ -23,7 +22,6 @@ interface ProfileFormProps {
 
 export function ProfileForm({ user, profile }: ProfileFormProps) {
   const router = useRouter()
-  const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -42,16 +40,21 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
     setSuccess(false)
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .upsert({
-          id: user.id,
+      const response = await fetch("/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
           ...formData,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+        }),
+      })
 
-      if (error) throw error
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Failed to update profile")
+      }
 
       setSuccess(true)
       router.refresh()
@@ -66,7 +69,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" value={user.email} disabled />
+        <Input id="email" type="email" value={user.primaryEmail || ""} disabled />
         <p className="text-xs text-muted-foreground">Email cannot be changed</p>
       </div>
 

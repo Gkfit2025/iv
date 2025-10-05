@@ -1,21 +1,21 @@
-import { createClient } from "@/lib/supabase/server"
+import { stackServerApp } from "@/stack"
+import { sql } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileForm } from "@/components/profile-form"
 
 export default async function ProfilePage() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await stackServerApp.getUser()
 
   if (!user) {
     redirect("/auth/login")
   }
 
   // Fetch user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const profiles = await sql`
+    SELECT * FROM profiles WHERE id = ${user.id}
+  `
+  const profile = profiles[0]
 
   return (
     <div className="container max-w-2xl py-8">

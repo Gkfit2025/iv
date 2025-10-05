@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ApplicationForm } from "@/components/application-form"
@@ -6,16 +5,14 @@ import { opportunities, hostOrganizations } from "@/lib/mock-data"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Clock } from "lucide-react"
+import { stackServerApp } from "@/stack"
+import { neon } from "@neondatabase/serverless"
 
 export default async function ApplyPage({ params }: { params: { id: string } }) {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await stackServerApp.getUser()
 
   if (!user) {
-    redirect("/auth/login")
+    redirect("/handler/signin")
   }
 
   const opportunity = opportunities.find((opp) => opp.id === params.id)
@@ -26,20 +23,27 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
 
   const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
 
-  // Check if user has already applied
-  const { data: existingApplication } = await supabase
-    .from("applications")
-    .select("id")
-    .eq("user_id", user.id)
-    .eq("opportunity_id", opportunity.id)
-    .single()
+  const sql = neon(process.env.iv_DATABASE_URL!)
 
-  if (existingApplication) {
+  // Check if user has already applied
+  const existingApplication = await sql`
+    SELECT id FROM applications
+    WHERE user_id = ${user.id}
+    AND opportunity_id = ${opportunity.id}
+    LIMIT 1
+  `
+
+  if (existingApplication.length > 0) {
     redirect(`/opportunities/${opportunity.id}`)
   }
 
   // Fetch user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const profileResult = await sql`
+    SELECT * FROM profiles
+    WHERE id = ${user.id}
+    LIMIT 1
+  `
+  const profile = profileResult[0] || null
 
   return (
     <div className="container max-w-3xl py-8">

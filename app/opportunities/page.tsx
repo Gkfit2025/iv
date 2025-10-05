@@ -1,16 +1,15 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SearchFilters, type SearchFilters as SearchFiltersType } from "@/components/search-filters"
 import { OpportunityCard } from "@/components/opportunity-card"
 import { opportunities } from "@/lib/mock-data"
-import { createClient } from "@/lib/supabase/client"
-import type { User } from "@supabase/supabase-js"
+import { useUser } from "@stackframe/stack"
 
 export default function OpportunitiesPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const user = useUser()
   const [filters, setFilters] = useState<SearchFiltersType>({
     searchTerm: "",
     location: "",
@@ -19,13 +18,6 @@ export default function OpportunitiesPage() {
     minDuration: 0,
     maxDuration: 52,
   })
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-  }, [])
 
   const filteredOpportunities = useMemo(() => {
     return opportunities.filter((opp) => {

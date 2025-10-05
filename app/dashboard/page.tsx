@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server"
+import { stackServerApp } from "@/stack"
+import { sql } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,25 +8,24 @@ import Link from "next/link"
 import { Calendar, MapPin, Building2, FileText, User } from "lucide-react"
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await stackServerApp.getUser()
 
   if (!user) {
     redirect("/auth/login")
   }
 
   // Fetch user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const profiles = await sql`
+    SELECT * FROM profiles WHERE id = ${user.id}
+  `
+  const profile = profiles[0]
 
   // Fetch user applications
-  const { data: applications } = await supabase
-    .from("applications")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
+  const applications = await sql`
+    SELECT * FROM applications 
+    WHERE user_id = ${user.id}
+    ORDER BY created_at DESC
+  `
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Welcome back, {profile?.full_name || user.email}</h1>
+        <h1 className="text-3xl font-bold">Welcome back, {profile?.full_name || user.primaryEmail}</h1>
         <p className="text-muted-foreground">Manage your volunteer applications and profile</p>
       </div>
 
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="font-medium">{user.email}</p>
+              <p className="font-medium">{user.primaryEmail}</p>
             </div>
             {profile?.full_name && (
               <div>

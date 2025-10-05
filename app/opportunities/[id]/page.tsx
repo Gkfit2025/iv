@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin, Clock, Users, Star, CheckCircle2, Gift, Shield } from "lucide-react"
 import { opportunities, hostOrganizations, reviews } from "@/lib/mock-data"
-import { createClient } from "@/lib/supabase/server"
+import { stackServerApp } from "@/stack"
+import { neon } from "@neondatabase/serverless"
 
 export default async function OpportunityDetailPage({
   params,
@@ -25,21 +26,18 @@ export default async function OpportunityDetailPage({
   const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
   const opportunityReviews = reviews.filter((r) => r.opportunityId === opportunity.id)
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await stackServerApp.getUser()
 
   let hasApplied = false
   if (user) {
-    const { data: existingApplication } = await supabase
-      .from("applications")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("opportunity_id", opportunity.id)
-      .single()
-
-    hasApplied = !!existingApplication
+    const sql = neon(process.env.iv_DATABASE_URL!)
+    const result = await sql`
+      SELECT id FROM applications
+      WHERE user_id = ${user.id}
+      AND opportunity_id = ${opportunity.id}
+      LIMIT 1
+    `
+    hasApplied = result.length > 0
   }
 
   return (
@@ -260,12 +258,12 @@ export default async function OpportunityDetailPage({
                   )
                 ) : (
                   <div className="space-y-2">
-                    <Link href="/auth/sign-up">
+                    <Link href="/handler/signup">
                       <Button className="w-full" size="lg">
                         Sign Up to Apply
                       </Button>
                     </Link>
-                    <Link href="/auth/login">
+                    <Link href="/handler/signin">
                       <Button variant="outline" className="w-full bg-transparent" size="lg">
                         Sign In
                       </Button>

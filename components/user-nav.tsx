@@ -10,29 +10,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { createClient } from "@/lib/supabase/client"
 import { User, LogOut, Settings } from "lucide-react"
 import { useRouter } from "next/navigation"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { useUser, useStackApp } from "@stackframe/stack"
 
-interface UserNavProps {
-  user: SupabaseUser
-}
-
-export function UserNav({ user }: UserNavProps) {
+export function UserNav() {
   const router = useRouter()
-  const supabase = createClient()
+  const user = useUser()
+  const app = useStackApp()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await app.signOut()
     router.push("/")
     router.refresh()
   }
 
   const getInitials = () => {
-    const email = user.email || ""
+    const email = user?.primaryEmail || ""
     return email.substring(0, 2).toUpperCase()
   }
+
+  if (!user) return null
 
   return (
     <DropdownMenu>
@@ -46,8 +44,8 @@ export function UserNav({ user }: UserNavProps) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || "User"}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+            <p className="text-sm font-medium leading-none">User</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.primaryEmail}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

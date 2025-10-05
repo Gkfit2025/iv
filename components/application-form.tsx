@@ -4,17 +4,16 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { sendEmail, getApplicationConfirmationEmail } from "@/lib/email"
-import type { User } from "@supabase/supabase-js"
+import type { CurrentUser } from "@stackframe/stack"
 
 interface ApplicationFormProps {
-  user: User
+  user: CurrentUser
   profile: {
     full_name: string | null
     phone: string | null
@@ -36,7 +35,6 @@ interface ApplicationFormProps {
 
 export function ApplicationForm({ user, profile, opportunity, host }: ApplicationFormProps) {
   const router = useRouter()
-  const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -83,27 +81,34 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
     }
 
     try {
-      // Insert application
-      const { error: applicationError } = await supabase.from("applications").insert({
-        user_id: user.id,
-        opportunity_id: opportunity.id,
-        opportunity_title: opportunity.title,
-        host_organization: host?.name || "Unknown",
-        full_name: formData.full_name,
-        email: user.email,
-        phone: formData.phone,
-        country: formData.country,
-        applicant_type: formData.applicant_type,
-        availability_start: formData.availability_start,
-        availability_end: formData.availability_end,
-        duration_weeks: Number.parseInt(formData.duration_weeks),
-        motivation: formData.motivation,
-        relevant_experience: formData.relevant_experience || null,
-        skills: formData.skills || null,
-        status: "pending",
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          opportunity_id: opportunity.id,
+          opportunity_title: opportunity.title,
+          host_organization: host?.name || "Unknown",
+          full_name: formData.full_name,
+          email: user.primaryEmail,
+          phone: formData.phone,
+          country: formData.country,
+          applicant_type: formData.applicant_type,
+          availability_start: formData.availability_start,
+          availability_end: formData.availability_end,
+          duration_weeks: Number.parseInt(formData.duration_weeks),
+          motivation: formData.motivation,
+          relevant_experience: formData.relevant_experience || null,
+          skills: formData.skills || null,
+        }),
       })
 
-      if (applicationError) throw applicationError
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Failed to submit application")
+      }
 
       // Update profile if needed
       if (
@@ -111,16 +116,18 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
         formData.phone !== profile?.phone ||
         formData.country !== profile?.country
       ) {
-        await supabase
-          .from("profiles")
-          .upsert({
-            id: user.id,
+        await fetch("/api/profile", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
             full_name: formData.full_name,
             phone: formData.phone,
             country: formData.country,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", user.id)
+          }),
+        })
       }
 
       try {
@@ -131,7 +138,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
         })
 
         await sendEmail({
-          to: user.email || "",
+          to: user.primaryEmail || "",
           subject: emailContent.subject,
           html: emailContent.html,
         })
@@ -155,7 +162,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
 
         <div className="space-y-2">
           <Label htmlFor="email">Email *</Label>
-          <Input id="email" type="email" value={user.email} disabled />
+          <Input id="email" type="email" value={user.primaryEmail || ""} disabled />
         </div>
 
         <div className="space-y-2">

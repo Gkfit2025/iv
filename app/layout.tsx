@@ -2,6 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Suspense } from "react"
+import { StackProvider } from "@stackframe/stack"
+import { stackServerApp } from "@/stack"
 import "./globals.css"
 
 const inter = Inter({
@@ -26,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        <StackProvider app={stackServerApp}>
+          <Suspense fallback={null}>{children}</Suspense>
+        </StackProvider>
       </body>
     </html>
   )

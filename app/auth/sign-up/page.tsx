@@ -1,8 +1,6 @@
 "use client"
 
 import type React from "react"
-
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useStackApp } from "@stackframe/stack"
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("")
@@ -19,10 +18,10 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const app = useStackApp()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
@@ -39,24 +38,11 @@ export default function SignUpPage() {
     }
 
     try {
-      const redirectUrl = process.env.NEXT_PUBLIC_APP_URL
-        ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
-        : `${window.location.origin}/auth/callback`
-
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
-      if (error) throw error
-      router.push("/auth/verify-email")
+      await app.signUpWithCredential({ email, password })
+      router.push("/dashboard")
+      router.refresh()
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+      setError(error instanceof Error ? error.message : "Failed to create account")
     } finally {
       setIsLoading(false)
     }

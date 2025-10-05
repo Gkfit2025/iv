@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -11,11 +11,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Globe, Heart, CheckCircle2 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import type { User } from "@supabase/supabase-js"
+import { useUser } from "@stackframe/stack"
 
 export default function JoinIVYPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const user = useUser()
   const [formData, setFormData] = useState({
     organizationName: "",
     email: "",
@@ -24,13 +23,6 @@ export default function JoinIVYPage() {
     website: "",
     description: "",
   })
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
