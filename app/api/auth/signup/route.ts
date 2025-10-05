@@ -11,11 +11,11 @@ export async function POST(request: NextRequest) {
 
     console.log("[v0] Signup attempt for email:", email)
 
-    const existingProfiles = await sql`
-      SELECT id FROM profiles WHERE id = ${email}::uuid
+    const existingUsers = await sql`
+      SELECT id FROM users WHERE email = ${email}
     `
 
-    if (existingProfiles.length > 0) {
+    if (existingUsers.length > 0) {
       console.log("[v0] User already exists")
       return NextResponse.json({ error: "User already exists" }, { status: 400 })
     }
@@ -24,24 +24,29 @@ export async function POST(request: NextRequest) {
     const passwordHash = await hash(password, 10)
     console.log("[v0] Password hashed successfully")
 
-    // Note: This is a workaround since we don't have a users table yet
-    const newProfiles = await sql`
-      INSERT INTO profiles (id, full_name, bio, created_at, updated_at)
-      VALUES (gen_random_uuid(), ${fullName}, ${passwordHash}, NOW(), NOW())
-      RETURNING id, full_name
+    const newUsers = await sql`
+      INSERT INTO users (email, password_hash, created_at, updated_at)
+      VALUES (${email}, ${passwordHash}, NOW(), NOW())
+      RETURNING id, email
     `
 
-    const profile = newProfiles[0]
-    console.log("[v0] Profile created:", profile.id)
+    const user = newUsers[0]
+    console.log("[v0] User created:", user.id)
 
-    const token = await new SignJWT({ userId: profile.id, email: email, fullName: profile.full_name })
+    await sql`
+      INSERT INTO profiles (user_id, full_name, created_at, updated_at)
+      VALUES (${user.id}, ${fullName}, NOW(), NOW())
+    `
+    console.log("[v0] Profile created for user:", user.id)
+
+    const token = await new SignJWT({ userId: user.id, email: user.email, fullName })
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime("7d")
       .sign(JWT_SECRET)
 
     // Set cookie
     const response = NextResponse.json({
-      user: { id: profile.id, email: email, fullName: profile.full_name },
+      user: { id: user.id, email: user.email, fullName },
     })
 
     response.cookies.set("session", token, {
