@@ -1,17 +1,16 @@
 import { neon } from "@neondatabase/serverless"
 
-// Try multiple environment variable names in order of preference
 const connectionString =
+  process.env.iv_POSTGRES_URL ||
   process.env.POSTGRES_URL ||
+  process.env.iv_DATABASE_URL ||
   process.env.DATABASE_URL ||
   process.env.POSTGRES_PRISMA_URL ||
-  process.env.iv_POSTGRES_URL ||
-  process.env.iv_DATABASE_URL ||
   ""
 
 if (!connectionString) {
   throw new Error(
-    "No database connection string found. Please set POSTGRES_URL, DATABASE_URL, or iv_POSTGRES_URL environment variable.",
+    "No database connection string found. Please set iv_POSTGRES_URL or POSTGRES_URL environment variable.",
   )
 }
 
