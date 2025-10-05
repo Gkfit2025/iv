@@ -1,12 +1,31 @@
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { stackServerApp } from "@/stack"
-import { StackMiddleware } from "@stackframe/stack/dist/lib/stack-middleware"
 
-export default StackMiddleware(stackServerApp, {
-  // Redirect authenticated users away from auth pages
-  signedInRedirectPath: "/dashboard",
-  // Redirect unauthenticated users to login
-  signedOutRedirectPath: "/auth/login",
-})
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Get the user from Stack Auth
+  const user = await stackServerApp.getUser()
+
+  // Auth pages - redirect if already logged in
+  if (pathname.startsWith("/auth/")) {
+    if (user) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+    return NextResponse.next()
+  }
+
+  // Protected routes - redirect if not logged in
+  const protectedRoutes = ["/dashboard", "/profile", "/applications"]
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+
+  if (isProtectedRoute && !user) {
+    return NextResponse.redirect(new URL("/auth/login", request.url))
+  }
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [
