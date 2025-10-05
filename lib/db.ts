@@ -1,6 +1,15 @@
-import { neon } from "@neondatabase/serverless"
+import { neon, neonConfig } from "@neondatabase/serverless"
 
-export const sql = neon(process.env.POSTGRES_URL!)
+neonConfig.fetchConnectionCache = true
+
+const databaseUrl =
+  process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.iv_POSTGRES_URL || process.env.iv_DATABASE_URL
+
+if (!databaseUrl) {
+  throw new Error("Database URL not found in environment variables")
+}
+
+export const sql = neon(databaseUrl)
 
 export interface User {
   id: string
