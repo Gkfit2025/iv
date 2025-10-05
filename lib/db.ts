@@ -1,9 +1,22 @@
-import { sql } from "@vercel/postgres"
+import { neon } from "@neondatabase/serverless"
 
-// @vercel/postgres automatically uses POSTGRES_URL from environment variables
-// No need to manually configure the connection
+// Try multiple environment variable names in order of preference
+const connectionString =
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL ||
+  process.env.iv_POSTGRES_URL ||
+  process.env.iv_DATABASE_URL ||
+  ""
 
-export { sql }
+if (!connectionString) {
+  throw new Error(
+    "No database connection string found. Please set POSTGRES_URL, DATABASE_URL, or iv_POSTGRES_URL environment variable.",
+  )
+}
+
+// Create SQL client with Neon
+export const sql = neon(connectionString)
 
 export interface User {
   id: string
