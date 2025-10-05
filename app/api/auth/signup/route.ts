@@ -7,13 +7,28 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("[v0] Environment check:")
+    console.log("[v0] POSTGRES_URL exists:", !!process.env.POSTGRES_URL)
+    console.log("[v0] iv_POSTGRES_URL exists:", !!process.env.iv_POSTGRES_URL)
+    console.log("[v0] JWT_SECRET exists:", !!process.env.JWT_SECRET)
+
     const { email, password, fullName } = await request.json()
 
     console.log("[v0] Signup attempt for email:", email)
 
-    const existingUsers = await sql`
-      SELECT id FROM users WHERE email = ${email}
-    `
+    let existingUsers
+    try {
+      existingUsers = await sql`
+        SELECT id FROM users WHERE email = ${email}
+      `
+      console.log("[v0] Database connection successful")
+    } catch (dbError) {
+      console.error("[v0] Database connection error:", dbError)
+      return NextResponse.json(
+        { error: "Database connection failed: " + (dbError instanceof Error ? dbError.message : "Unknown error") },
+        { status: 500 },
+      )
+    }
 
     if (existingUsers.length > 0) {
       console.log("[v0] User already exists")
@@ -60,6 +75,12 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error("[v0] Signup error:", error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Signup failed" }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : "Signup failed",
+        details: error instanceof Error ? error.stack : undefined,
+      },
+      { status: 500 },
+    )
   }
 }
