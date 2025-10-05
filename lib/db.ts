@@ -1,19 +1,9 @@
-import { neon } from "@neondatabase/serverless"
+import { sql } from "@vercel/postgres"
 
-const databaseUrl =
-  process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.iv_DATABASE_URL || process.env.iv_POSTGRES_URL
+// @vercel/postgres automatically uses POSTGRES_URL from environment variables
+// No need to manually configure the connection
 
-if (!databaseUrl) {
-  throw new Error(
-    "No database URL found. Please set DATABASE_URL, POSTGRES_URL, iv_DATABASE_URL, or iv_POSTGRES_URL environment variable.",
-  )
-}
-
-export const sql = neon(databaseUrl, {
-  fetchOptions: {
-    cache: "no-store",
-  },
-})
+export { sql }
 
 export interface User {
   id: string
