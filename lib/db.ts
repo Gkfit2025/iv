@@ -1,6 +1,13 @@
 import { neon } from "@neondatabase/serverless"
 
-const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL!
+const databaseUrl =
+  process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.iv_DATABASE_URL || process.env.iv_POSTGRES_URL
+
+if (!databaseUrl) {
+  throw new Error(
+    "No database URL found. Please set DATABASE_URL, POSTGRES_URL, iv_DATABASE_URL, or iv_POSTGRES_URL environment variable.",
+  )
+}
 
 export const sql = neon(databaseUrl, {
   fetchOptions: {
