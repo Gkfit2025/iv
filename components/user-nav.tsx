@@ -12,21 +12,20 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { User, LogOut, Settings } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useUser, useStackApp } from "@stackframe/stack"
+import { useAuth } from "@/lib/auth-context"
 
 export function UserNav() {
   const router = useRouter()
-  const user = useUser()
-  const app = useStackApp()
+  const { user, logout } = useAuth()
 
   const handleSignOut = async () => {
-    await app.signOut()
+    await logout()
     router.push("/")
     router.refresh()
   }
 
   const getInitials = () => {
-    const email = user?.primaryEmail || ""
+    const email = user?.email || ""
     return email.substring(0, 2).toUpperCase()
   }
 
@@ -45,7 +44,7 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">User</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.primaryEmail}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

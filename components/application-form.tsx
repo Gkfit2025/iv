@@ -10,10 +10,14 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { sendEmail, getApplicationConfirmationEmail } from "@/lib/email"
-import type { CurrentUser } from "@stackframe/stack"
+
+interface User {
+  id: string
+  email: string
+}
 
 interface ApplicationFormProps {
-  user: CurrentUser
+  user: User
   profile: {
     full_name: string | null
     phone: string | null
@@ -92,7 +96,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
           opportunity_title: opportunity.title,
           host_organization: host?.name || "Unknown",
           full_name: formData.full_name,
-          email: user.primaryEmail,
+          email: user.email,
           phone: formData.phone,
           country: formData.country,
           applicant_type: formData.applicant_type,
@@ -138,7 +142,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
         })
 
         await sendEmail({
-          to: user.primaryEmail || "",
+          to: user.email || "",
           subject: emailContent.subject,
           html: emailContent.html,
         })
@@ -162,7 +166,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
 
         <div className="space-y-2">
           <Label htmlFor="email">Email *</Label>
-          <Input id="email" type="email" value={user.primaryEmail || ""} disabled />
+          <Input id="email" type="email" value={user.email || ""} disabled />
         </div>
 
         <div className="space-y-2">

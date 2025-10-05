@@ -5,14 +5,14 @@ import { opportunities, hostOrganizations } from "@/lib/mock-data"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Clock } from "lucide-react"
-import { stackServerApp } from "@/stack"
+import { getSession } from "@/lib/auth"
 import { neon } from "@neondatabase/serverless"
 
 export default async function ApplyPage({ params }: { params: { id: string } }) {
-  const user = await stackServerApp.getUser()
+  const user = await getSession()
 
   if (!user) {
-    redirect("/handler/signin")
+    redirect("/auth/login")
   }
 
   const opportunity = opportunities.find((opp) => opp.id === params.id)

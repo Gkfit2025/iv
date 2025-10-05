@@ -11,10 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Globe, Heart, CheckCircle2 } from "lucide-react"
-import { useUser } from "@stackframe/stack"
 
 export default function JoinIVYPage() {
-  const user = useUser()
   const [formData, setFormData] = useState({
     organizationName: "",
     email: "",
@@ -41,7 +39,7 @@ export default function JoinIVYPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header user={user} />
+      <Header />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-secondary/10 to-background py-16 md:py-24">

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin, Clock, Users, Star, CheckCircle2, Gift, Shield } from "lucide-react"
 import { opportunities, hostOrganizations, reviews } from "@/lib/mock-data"
-import { stackServerApp } from "@/stack"
+import { getSession } from "@/lib/auth"
 import { neon } from "@neondatabase/serverless"
 
 export default async function OpportunityDetailPage({
@@ -26,7 +26,7 @@ export default async function OpportunityDetailPage({
   const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
   const opportunityReviews = reviews.filter((r) => r.opportunityId === opportunity.id)
 
-  const user = await stackServerApp.getUser()
+  const user = await getSession()
 
   let hasApplied = false
   if (user) {

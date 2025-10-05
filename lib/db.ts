@@ -5,6 +5,8 @@ export const sql = neon(process.env.POSTGRES_URL!)
 export interface User {
   id: string
   email: string
+  password_hash: string
+  full_name: string
   email_verified: boolean
   created_at: Date
   updated_at: Date

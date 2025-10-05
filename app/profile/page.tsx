@@ -1,11 +1,11 @@
-import { stackServerApp } from "@/stack"
+import { getSession } from "@/lib/auth"
 import { sql } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileForm } from "@/components/profile-form"
 
 export default async function ProfilePage() {
-  const user = await stackServerApp.getUser()
+  const user = await getSession()
 
   if (!user) {
     redirect("/auth/login")

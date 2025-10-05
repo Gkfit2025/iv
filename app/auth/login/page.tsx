@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useStackApp } from "@stackframe/stack"
+import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const app = useStackApp()
+  const { login } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,7 +24,7 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      await app.signInWithCredential({ email, password })
+      await login(email, password)
       router.push("/dashboard")
       router.refresh()
     } catch (error: unknown) {

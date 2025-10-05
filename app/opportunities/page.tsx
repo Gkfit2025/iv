@@ -6,10 +6,8 @@ import { Footer } from "@/components/footer"
 import { SearchFilters, type SearchFilters as SearchFiltersType } from "@/components/search-filters"
 import { OpportunityCard } from "@/components/opportunity-card"
 import { opportunities } from "@/lib/mock-data"
-import { useUser } from "@stackframe/stack"
 
 export default function OpportunitiesPage() {
-  const user = useUser()
   const [filters, setFilters] = useState<SearchFiltersType>({
     searchTerm: "",
     location: "",
@@ -64,7 +62,7 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header user={user} />
+      <Header />
 
       <div className="container py-8 flex-1">
         <div className="mb-8">

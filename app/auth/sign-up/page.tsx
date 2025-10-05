@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useStackApp } from "@stackframe/stack"
+import { useAuth } from "@/lib/auth-context"
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("")
@@ -18,7 +18,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const app = useStackApp()
+  const { signup } = useAuth()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,7 +38,7 @@ export default function SignUpPage() {
     }
 
     try {
-      await app.signUpWithCredential({ email, password })
+      await signup(email, password)
       router.push("/dashboard")
       router.refresh()
     } catch (error: unknown) {

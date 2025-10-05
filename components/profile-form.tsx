@@ -8,10 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import type { CurrentUser } from "@stackframe/stack"
+
+interface User {
+  id: string
+  email: string
+}
 
 interface ProfileFormProps {
-  user: CurrentUser
+  user: User
   profile: {
     full_name: string | null
     phone: string | null
@@ -69,7 +73,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" value={user.primaryEmail || ""} disabled />
+        <Input id="email" type="email" value={user.email || ""} disabled />
         <p className="text-xs text-muted-foreground">Email cannot be changed</p>
       </div>
 
