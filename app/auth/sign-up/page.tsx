@@ -38,7 +38,7 @@ export default function SignUpPage() {
     }
 
     try {
-      await signup(email, password)
+      await signup(email, password, fullName)
       router.push("/dashboard")
       router.refresh()
     } catch (error: unknown) {

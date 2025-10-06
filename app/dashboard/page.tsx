@@ -16,13 +16,13 @@ export default async function DashboardPage() {
 
   // Fetch user profile
   const profiles = await sql`
-    SELECT * FROM profiles WHERE id = ${user.id}
+    SELECT * FROM public.profiles WHERE user_id = ${user.id}
   `
   const profile = profiles[0]
 
   // Fetch user applications
   const applications = await sql`
-    SELECT * FROM applications 
+    SELECT * FROM public.applications 
     WHERE user_id = ${user.id}
     ORDER BY created_at DESC
   `

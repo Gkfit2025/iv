@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     // Find user by email
     const users = await sql`
-      SELECT id, email, password_hash FROM users WHERE email = ${email}
+      SELECT id, email, password_hash FROM public.users WHERE email = ${email}
     `
 
     if (users.length === 0) {
