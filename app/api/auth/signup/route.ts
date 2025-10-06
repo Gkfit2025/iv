@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     let existingUsers
     try {
       existingUsers = await sql`
-        SELECT id FROM users WHERE email = ${email}
+        SELECT id FROM public.users WHERE email = ${email}
       `
       console.log("[v0] Database connection successful")
     } catch (dbError) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Password hashed successfully")
 
     const newUsers = await sql`
-      INSERT INTO users (email, password_hash, created_at, updated_at)
+      INSERT INTO public.users (email, password_hash, created_at, updated_at)
       VALUES (${email}, ${passwordHash}, NOW(), NOW())
       RETURNING id, email
     `
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] User created:", user.id)
 
     await sql`
-      INSERT INTO profiles (user_id, full_name, created_at, updated_at)
+      INSERT INTO public.profiles (user_id, full_name, created_at, updated_at)
       VALUES (${user.id}, ${fullName}, NOW(), NOW())
     `
     console.log("[v0] Profile created for user:", user.id)
