@@ -1,17 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { SignJWT } from "jose"
 import { compare } from "bcryptjs"
 import { sql } from "@/lib/db"
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-key")
+import { createSession } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
 
-    // Find user by email
     const users = await sql`
-      SELECT id, email, password_hash FROM public.users WHERE email = ${email}
+      SELECT u.id, u.email, u.password_hash, p.full_name 
+      FROM public.users u
+      LEFT JOIN public.profiles p ON p.user_id = u.id
+      WHERE u.email = ${email}
     `
 
     if (users.length === 0) {
@@ -26,25 +26,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    // Create JWT token
-    const token = await new SignJWT({ userId: user.id, email: user.email })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("7d")
-      .sign(JWT_SECRET)
+    await createSession({
+      id: user.id,
+      email: user.email,
+      full_name: user.full_name || "",
+    })
 
-    // Set cookie
-    const response = NextResponse.json({
+    return NextResponse.json({
       user: { id: user.id, email: user.email },
     })
-
-    response.cookies.set("session", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
-    return response
   } catch (error) {
     console.error("[v0] Login error:", error)
     return NextResponse.json({ error: "Login failed" }, { status: 500 })
