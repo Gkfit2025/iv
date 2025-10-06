@@ -8,24 +8,49 @@ import Link from "next/link"
 import { Calendar, MapPin, Building2, FileText, User } from "lucide-react"
 
 export default async function DashboardPage() {
-  const user = await getSession()
+  console.log("[v0] Dashboard: Starting to load")
 
-  if (!user) {
+  let user
+  try {
+    user = await getSession()
+    console.log("[v0] Dashboard: Session loaded", user ? "User found" : "No user")
+  } catch (error) {
+    console.error("[v0] Dashboard: Error getting session", error)
     redirect("/auth/login")
   }
 
+  if (!user) {
+    console.log("[v0] Dashboard: No user, redirecting to login")
+    redirect("/auth/login")
+  }
+
+  console.log("[v0] Dashboard: Fetching profile for user", user.id)
+
   // Fetch user profile
-  const profiles = await sql`
-    SELECT * FROM public.profiles WHERE user_id = ${user.id}
-  `
-  const profile = profiles[0]
+  let profile
+  try {
+    const profiles = await sql`
+      SELECT * FROM public.profiles WHERE user_id = ${user.id}
+    `
+    profile = profiles[0]
+    console.log("[v0] Dashboard: Profile loaded", profile ? "Found" : "Not found")
+  } catch (error) {
+    console.error("[v0] Dashboard: Error fetching profile", error)
+  }
 
   // Fetch user applications
-  const applications = await sql`
-    SELECT * FROM public.applications 
-    WHERE user_id = ${user.id}
-    ORDER BY created_at DESC
-  `
+  let applications
+  try {
+    applications = await sql`
+      SELECT * FROM public.applications 
+      WHERE user_id = ${user.id}
+      ORDER BY created_at DESC
+    `
+    console.log("[v0] Dashboard: Applications loaded", applications?.length || 0)
+  } catch (error) {
+    console.error("[v0] Dashboard: Error fetching applications", error)
+    applications = []
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
