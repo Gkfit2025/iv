@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { hash } from "bcryptjs"
 import { sql } from "@/lib/db"
 import { encrypt } from "@/lib/auth"
@@ -6,6 +7,8 @@ import { encrypt } from "@/lib/auth"
 export async function POST(request: NextRequest) {
   try {
     const { email, password, fullName } = await request.json()
+
+    console.log("[v0] Signup attempt for:", email)
 
     const existingUsers = await sql`
       SELECT id FROM public.users WHERE email = ${email}
@@ -37,11 +40,9 @@ export async function POST(request: NextRequest) {
       full_name: fullName,
     })
 
-    const response = NextResponse.json({
-      user: { id: user.id, email: user.email },
-    })
+    console.log("[v0] Setting session cookie for new user:", user.id)
 
-    response.cookies.set("session", sessionToken, {
+    cookies().set("session", sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -49,7 +50,9 @@ export async function POST(request: NextRequest) {
       path: "/",
     })
 
-    return response
+    return NextResponse.json({
+      user: { id: user.id, email: user.email },
+    })
   } catch (error) {
     console.error("[v0] Signup error:", error)
     return NextResponse.json(
