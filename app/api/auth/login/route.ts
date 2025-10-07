@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { cookies } from "next/headers"
 import { compare } from "bcryptjs"
 import { sql } from "@/lib/db"
 import { encrypt } from "@/lib/auth"
@@ -36,8 +35,13 @@ export async function POST(request: NextRequest) {
     })
 
     console.log("[v0] Setting session cookie for user:", user.id)
+    console.log("[v0] Session token length:", sessionToken.length)
 
-    cookies().set("session", sessionToken, {
+    const response = NextResponse.json({
+      user: { id: user.id, email: user.email },
+    })
+
+    response.cookies.set("session", sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -45,9 +49,9 @@ export async function POST(request: NextRequest) {
       path: "/",
     })
 
-    return NextResponse.json({
-      user: { id: user.id, email: user.email },
-    })
+    console.log("[v0] Cookie set on response")
+
+    return response
   } catch (error) {
     console.error("[v0] Login error:", error)
     return NextResponse.json({ error: "Login failed" }, { status: 500 })

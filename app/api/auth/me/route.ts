@@ -1,10 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { getSession } from "@/lib/auth"
 import { sql } from "@/lib/db"
 
 export async function GET(request: NextRequest) {
   try {
     console.log("[v0] /api/auth/me - starting auth check")
+
+    const cookieStore = cookies()
+    const allCookies = cookieStore.getAll()
+    console.log("[v0] /api/auth/me - all cookies:", allCookies)
+    console.log("[v0] /api/auth/me - session cookie:", cookieStore.get("session"))
 
     const session = await getSession()
     console.log("[v0] /api/auth/me - session:", session)
