@@ -29,7 +29,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         console.log("[v0] AuthContext - checking auth")
-        const response = await fetch("/api/auth/me")
+        const response = await fetch("/api/auth/me", {
+          credentials: "include",
+        })
         console.log("[v0] AuthContext - /api/auth/me response status:", response.status)
 
         if (response.ok) {
@@ -54,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
+      credentials: "include",
     })
 
     if (!response.ok) {
@@ -71,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, fullName }),
+      credentials: "include",
     })
 
     if (!response.ok) {
@@ -85,7 +89,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     console.log("[v0] AuthContext - logging out")
-    await fetch("/api/auth/logout", { method: "POST" })
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    })
     setUser(null)
   }
 

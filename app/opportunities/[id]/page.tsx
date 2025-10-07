@@ -257,12 +257,12 @@ export default async function OpportunityDetailPage({
                   )
                 ) : (
                   <div className="space-y-2">
-                    <Link href="/handler/signup">
+                    <Link href="/auth/sign-up">
                       <Button className="w-full" size="lg">
                         Sign Up to Apply
                       </Button>
                     </Link>
-                    <Link href="/handler/signin">
+                    <Link href="/auth/login">
                       <Button variant="outline" className="w-full bg-transparent" size="lg">
                         Sign In
                       </Button>
