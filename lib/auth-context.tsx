@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 interface User {
   id: string
   email: string
+  full_name?: string
 }
 
 interface AuthContextType {
@@ -27,10 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("[v0] AuthContext - checking auth")
         const response = await fetch("/api/auth/me")
+        console.log("[v0] AuthContext - /api/auth/me response status:", response.status)
+
         if (response.ok) {
           const data = await response.json()
+          console.log("[v0] AuthContext - user data received:", data)
           setUser(data.user)
+        } else {
+          console.log("[v0] AuthContext - not authenticated")
         }
       } catch (error) {
         console.error("[v0] Auth check failed:", error)
@@ -55,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await response.json()
+    console.log("[v0] AuthContext - login successful, user:", data.user)
     setUser(data.user)
   }
 
@@ -71,10 +79,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await response.json()
+    console.log("[v0] AuthContext - signup successful, user:", data.user)
     setUser(data.user)
   }
 
   const logout = async () => {
+    console.log("[v0] AuthContext - logging out")
     await fetch("/api/auth/logout", { method: "POST" })
     setUser(null)
   }
