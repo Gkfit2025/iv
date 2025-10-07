@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin, Clock, Users, Star, CheckCircle2, Gift, Shield } from "lucide-react"
 import { opportunities, hostOrganizations, reviews } from "@/lib/mock-data"
 import { getSession } from "@/lib/auth"
-import { neon } from "@neondatabase/serverless"
+import { sql } from "@/lib/db"
 
 export default async function OpportunityDetailPage({
   params,
@@ -30,9 +30,8 @@ export default async function OpportunityDetailPage({
 
   let hasApplied = false
   if (user) {
-    const sql = neon(process.env.iv_DATABASE_URL!)
     const result = await sql`
-      SELECT id FROM applications
+      SELECT id FROM public.applications
       WHERE user_id = ${user.id}
       AND opportunity_id = ${opportunity.id}
       LIMIT 1
@@ -42,7 +41,7 @@ export default async function OpportunityDetailPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header user={user} />
+      <Header />
 
       <div className="container py-8 flex-1">
         {/* Image Gallery */}
