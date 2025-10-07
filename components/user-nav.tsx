@@ -18,7 +18,10 @@ export function UserNav() {
   const router = useRouter()
   const { user, logout } = useAuth()
 
+  console.log("[v0] UserNav - user:", user)
+
   const handleSignOut = async () => {
+    console.log("[v0] UserNav - handleSignOut called")
     await logout()
     router.push("/")
     router.refresh()
@@ -29,7 +32,10 @@ export function UserNav() {
     return email.substring(0, 2).toUpperCase()
   }
 
-  if (!user) return null
+  if (!user) {
+    console.log("[v0] UserNav - no user, returning null")
+    return null
+  }
 
   return (
     <DropdownMenu>
@@ -43,7 +49,7 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">User</p>
+            <p className="text-sm font-medium leading-none">{user.full_name || "User"}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
