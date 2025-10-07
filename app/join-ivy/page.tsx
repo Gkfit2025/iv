@@ -45,7 +45,7 @@ export default function JoinIVYPage() {
       <section className="bg-gradient-to-b from-secondary/10 to-background py-16 md:py-24">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-balance text-4xl font-bold md:text-5xl">Join the IVY Network</h1>
+            <h1 className="mb-4 text-balance text-4xl font-bold md:text-5xl">Join the IV Network</h1>
             <p className="text-pretty text-lg text-muted-foreground md:text-xl">
               Connect with passionate volunteers worldwide and grow your organization's impact. Become a verified host
               organization today.
@@ -58,7 +58,7 @@ export default function JoinIVYPage() {
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Benefits Section */}
           <div>
-            <h2 className="mb-6 text-2xl font-bold">Why Join IVY?</h2>
+            <h2 className="mb-6 text-2xl font-bold">Why Join IV?</h2>
 
             <div className="space-y-6">
               <Card>
