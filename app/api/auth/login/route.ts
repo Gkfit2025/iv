@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { compare } from "bcryptjs"
 import { sql } from "@/lib/db"
-import { createSession } from "@/lib/auth"
+import { encrypt } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,15 +26,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    await createSession({
+    const sessionToken = await encrypt({
       id: user.id,
       email: user.email,
       full_name: user.full_name || "",
     })
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: { id: user.id, email: user.email },
     })
+
+    response.cookies.set("session", sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    })
+
+    return response
   } catch (error) {
     console.error("[v0] Login error:", error)
     return NextResponse.json({ error: "Login failed" }, { status: 500 })
