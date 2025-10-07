@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
       SELECT full_name FROM public.profiles WHERE user_id = ${session.id}
     `
 
-    console.log("[v0] /api/auth/me - profile result:", profileResult.rows)
+    console.log("[v0] /api/auth/me - profile result:", profileResult)
 
-    const full_name = profileResult.rows[0]?.full_name || ""
+    const full_name = profileResult[0]?.full_name || ""
 
     const userData = {
       id: session.id,
