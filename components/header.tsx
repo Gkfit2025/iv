@@ -8,20 +8,14 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 
 export function Header() {
-  const { user, checkAuth } = useAuth()
+  const { user, logout } = useAuth()
   const router = useRouter()
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      })
-
-      if (response.ok) {
-        await checkAuth() // Refresh auth state
-        router.push("/") // Redirect to home
-      }
+      await logout()
+      router.push("/") // Redirect to home
+      router.refresh() // Refresh the page to update UI
     } catch (error) {
       console.error("Sign out error:", error)
     }
