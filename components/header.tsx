@@ -5,9 +5,27 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { UserNav } from "@/components/user-nav"
 import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 
 export function Header() {
-  const { user } = useAuth()
+  const { user, checkAuth } = useAuth()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      })
+
+      if (response.ok) {
+        await checkAuth() // Refresh auth state
+        router.push("/") // Redirect to home
+      }
+    } catch (error) {
+      console.error("Sign out error:", error)
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -30,6 +48,9 @@ export function Header() {
                 <Button variant="ghost">Dashboard</Button>
               </Link>
               <UserNav />
+              <Button variant="outline" onClick={handleSignOut} size="sm">
+                Sign Out
+              </Button>
             </>
           ) : (
             <>
