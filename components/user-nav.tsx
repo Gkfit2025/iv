@@ -18,8 +18,6 @@ export function UserNav() {
   const router = useRouter()
   const { user, logout } = useAuth()
 
-  console.log("[v0] UserNav - user:", user)
-
   const handleSignOut = async () => {
     console.log("[v0] UserNav - handleSignOut called")
     await logout()
@@ -33,12 +31,11 @@ export function UserNav() {
   }
 
   if (!user) {
-    console.log("[v0] UserNav - no user, returning null")
     return null
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
@@ -46,7 +43,7 @@ export function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 z-50" align="end" sideOffset={5}>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.full_name || "User"}</p>
