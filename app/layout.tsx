@@ -27,7 +27,7 @@ export const metadata: Metadata = {
         url: "/gkf-logo.webp",
         width: 1200,
         height: 630,
-        alt: "GKF - Global Knowledge Foundation Logo",
+        alt: "GKF - Grace Kennett Foundation Logo",
       },
     ],
     locale: "en_US",
