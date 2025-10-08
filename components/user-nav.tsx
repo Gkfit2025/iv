@@ -19,7 +19,6 @@ export function UserNav() {
   const { user, logout } = useAuth()
 
   const handleSignOut = async () => {
-    console.log("[v0] UserNav - handleSignOut called")
     await logout()
     router.push("/")
     router.refresh()
@@ -34,22 +33,16 @@ export function UserNav() {
     return null
   }
 
-  console.log("[v0] UserNav - rendering with user:", user.email)
-
   return (
-    <DropdownMenu modal={false} onOpenChange={(open) => console.log("[v0] UserNav - dropdown open state:", open)}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="relative h-9 w-9 rounded-full"
-          onClick={() => console.log("[v0] UserNav - trigger clicked")}
-        >
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarFallback className="bg-primary/10 text-primary">{getInitials()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 z-[100]" align="end" style={{ zIndex: 100 }}>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.full_name || "User"}</p>

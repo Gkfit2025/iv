@@ -12,11 +12,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = session.id
-    console.log("[v0] /api/profile - user ID from session:", userId)
-
     const body = await request.json()
-    const { full_name, phone, country, bio } = body
+    const { userId, full_name, phone, country, bio } = body
 
     console.log("[v0] /api/profile - updating profile for user:", userId)
 
