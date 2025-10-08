@@ -17,6 +17,28 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  openGraph: {
+    title: "IV - Interns & Volunteers",
+    description: "Connect with meaningful volunteer opportunities around the world",
+    url: "https://gkfiv.vercel.app",
+    siteName: "IV - Interns & Volunteers",
+    images: [
+      {
+        url: "/gkf-logo.webp",
+        width: 1200,
+        height: 630,
+        alt: "GKF - Global Knowledge Foundation Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IV - Interns & Volunteers",
+    description: "Connect with meaningful volunteer opportunities around the world",
+    images: ["/gkf-logo.webp"],
+  },
 }
 
 export default function RootLayout({
