@@ -18,14 +18,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and password required" }, { status: 400 })
     }
 
-    console.log("[v0] Login route - querying database")
-    const users = await sql`
-      SELECT u.id, u.email, u.password_hash, p.full_name 
-      FROM public.users u
-      LEFT JOIN public.profiles p ON p.user_id = u.id
-      WHERE u.email = ${email}
-    `
-    console.log("[v0] Login route - query complete, found users:", users.length)
+    console.log("[v0] Login route - querying database for email:", email)
+    let users
+    try {
+      users = await sql`
+        SELECT u.id, u.email, u.password_hash, p.full_name 
+        FROM public.users u
+        LEFT JOIN public.profiles p ON p.user_id = u.id
+        WHERE u.email = ${email}
+      `
+      console.log("[v0] Login route - query complete, found users:", users.length)
+    } catch (dbError) {
+      console.error("[v0] Login route - DATABASE ERROR:", dbError)
+      console.error(
+        "[v0] Login route - DB error message:",
+        dbError instanceof Error ? dbError.message : String(dbError),
+      )
+      console.error("[v0] Login route - DB error name:", dbError instanceof Error ? dbError.name : "unknown")
+      console.error("[v0] Login route - DB error details:", JSON.stringify(dbError, null, 2))
+      throw dbError
+    }
 
     if (users.length === 0) {
       console.log("[v0] Login route - user not found")
