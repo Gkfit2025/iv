@@ -51,8 +51,8 @@ export default function AboutPage() {
         <section className="mb-16">
           <div className="mx-auto max-w-4xl">
             <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
-                <Compass className="h-6 w-6 text-secondary" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                <Compass className="h-6 w-6 text-primary" />
               </div>
               <h2 className="text-3xl font-bold">Our Mission</h2>
             </div>
