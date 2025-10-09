@@ -99,7 +99,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </Link>
               <Link
-                href="https://chat.whatsapp.com/KDd1RLyrpsqD3KIGVtysyc"
+                href="https://chat.whatsapp.com/CRHUTSYNGadLGejPgLdys7?mode=ems_copy_t"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
