@@ -36,12 +36,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link 
-                href="https://gkfmadurai.in/about-us/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary hover:underline flex items-center gap-1"
-              >
+                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
                   About Us
                 </Link>
               </li>
@@ -51,29 +46,29 @@ export function Footer() {
           {/* GKF Information */}
           <div>
             <h3 className="mb-4 text-sm font-semibold">About GKF</h3>
-             <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm">
               <li>
-              <Link 
-                href="https://gkfmadurai.in/about-us/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
+                <Link
+                  href="https://gkfmadurai.in/about-us/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Grace Kennett Foundation
                 </Link>
               </li>
               <li>
-            <Link
-              href="https://gkfmadurai.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-primary hover:underline flex items-center gap-1"
-            >
-              <Globe className="h-3 w-3" />
-              Visit GKF Website
-            </Link>
-            </li>
-          </ul>
+                <Link
+                  href="https://gkfmadurai.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline flex items-center gap-1"
+                >
+                  <Globe className="h-3 w-3" />
+                  Visit GKF Website
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Social Media Links */}
