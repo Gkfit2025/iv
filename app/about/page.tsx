@@ -15,7 +15,7 @@ export default function AboutPage() {
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight md:text-6xl">
-              About Interns & Volunteers
+              About Interns & Volunteers (IV)
             </h1>
             <p className="text-pretty text-lg text-muted-foreground md:text-xl">
               Connecting passionate individuals with meaningful opportunities to create lasting impact across the globe
