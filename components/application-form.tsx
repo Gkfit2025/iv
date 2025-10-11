@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { sendEmail, getApplicationConfirmationEmail } from "@/lib/email"
 
 interface User {
   id: string
@@ -90,6 +89,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           user_id: user.id,
           opportunity_id: opportunity.id,
@@ -125,6 +125,7 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             userId: user.id,
             full_name: formData.full_name,
@@ -132,23 +133,6 @@ export function ApplicationForm({ user, profile, opportunity, host }: Applicatio
             country: formData.country,
           }),
         })
-      }
-
-      try {
-        const emailContent = getApplicationConfirmationEmail({
-          applicantName: formData.full_name,
-          opportunityTitle: opportunity.title,
-          hostOrganization: host?.name || "Unknown",
-        })
-
-        await sendEmail({
-          to: user.email || "",
-          subject: emailContent.subject,
-          html: emailContent.html,
-        })
-      } catch (emailError) {
-        console.error("[v0] Failed to send confirmation email:", emailError)
-        // Don't fail the application if email fails
       }
 
       router.push("/dashboard?application=success")
