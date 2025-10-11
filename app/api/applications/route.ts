@@ -6,6 +6,9 @@ import { sendEmail, getApplicationConfirmationEmail } from "@/lib/email"
 export async function POST(request: Request) {
   try {
     console.log("[v0] /api/applications POST - starting")
+    console.log("[v0] /api/applications - Environment check:")
+    console.log("[v0] - RESEND_API_KEY present:", !!process.env.RESEND_API_KEY)
+    console.log("[v0] - NEXT_PUBLIC_APP_URL:", process.env.NEXT_PUBLIC_APP_URL)
 
     const session = await getSession()
     if (!session) {
@@ -80,6 +83,9 @@ export async function POST(request: Request) {
 
     console.log("[v0] /api/applications - application created successfully")
 
+    console.log("[v0] /api/applications - preparing to send confirmation email")
+    console.log("[v0] /api/applications - recipient email:", email)
+
     try {
       const emailContent = getApplicationConfirmationEmail({
         applicantName: full_name,
@@ -87,20 +93,30 @@ export async function POST(request: Request) {
         hostOrganization: host_organization,
       })
 
+      console.log("[v0] /api/applications - email content prepared, subject:", emailContent.subject)
+      console.log("[v0] /api/applications - calling sendEmail function...")
+
       const emailResult = await sendEmail({
         to: email,
         subject: emailContent.subject,
         html: emailContent.html,
       })
 
+      console.log("[v0] /api/applications - sendEmail returned:", JSON.stringify(emailResult, null, 2))
+
       if (emailResult.success) {
-        console.log("[v0] /api/applications - confirmation email sent successfully")
+        console.log("[v0] /api/applications - ✅ confirmation email sent successfully")
       } else {
-        console.warn("[v0] /api/applications - failed to send confirmation email:", emailResult.error)
+        console.warn("[v0] /api/applications - ❌ failed to send confirmation email:", emailResult.error)
       }
     } catch (emailError) {
       // Don't fail the application if email fails
-      console.error("[v0] /api/applications - email error:", emailError)
+      console.error("[v0] /api/applications - ❌ email exception caught:", emailError)
+      console.error("[v0] /api/applications - email error type:", emailError?.constructor?.name)
+      console.error(
+        "[v0] /api/applications - email error message:",
+        emailError instanceof Error ? emailError.message : String(emailError),
+      )
     }
 
     return NextResponse.json({ success: true })
