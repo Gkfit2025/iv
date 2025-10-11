@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getSession } from "@/lib/auth"
 import { sql } from "@/lib/db"
+import { sendEmail, getApplicationConfirmationEmail } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
@@ -78,6 +79,29 @@ export async function POST(request: Request) {
     `
 
     console.log("[v0] /api/applications - application created successfully")
+
+    try {
+      const emailContent = getApplicationConfirmationEmail({
+        applicantName: full_name,
+        opportunityTitle: opportunity_title,
+        hostOrganization: host_organization,
+      })
+
+      const emailResult = await sendEmail({
+        to: email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+      })
+
+      if (emailResult.success) {
+        console.log("[v0] /api/applications - confirmation email sent successfully")
+      } else {
+        console.warn("[v0] /api/applications - failed to send confirmation email:", emailResult.error)
+      }
+    } catch (emailError) {
+      // Don't fail the application if email fails
+      console.error("[v0] /api/applications - email error:", emailError)
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

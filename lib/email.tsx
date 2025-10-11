@@ -1,3 +1,7 @@
+import { Resend } from "resend"
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
 interface SendEmailParams {
   to: string
   subject: string
@@ -5,32 +9,30 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
-  // This is a placeholder for email sending functionality
-  // In production, you would integrate with a service like Resend, SendGrid, or AWS SES
+  try {
+    console.log("[v0] Sending email to:", to, "subject:", subject)
 
-  console.log("[v0] Email would be sent:", { to, subject })
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("[v0] RESEND_API_KEY not configured, skipping email send")
+      return { success: false, error: "Email service not configured" }
+    }
 
-  // For now, we'll just log the email
-  // To implement real email sending:
-  // 1. Add RESEND_API_KEY to environment variables
-  // 2. Install resend: npm install resend
-  // 3. Use the Resend API to send emails
+    const result = await resend.emails.send({
+      from: "IV Volunteers <onboarding@resend.dev>", // Resend's test domain
+      to,
+      subject,
+      html,
+    })
 
-  /*
-  Example with Resend:
-  
-  import { Resend } from 'resend'
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  
-  await resend.emails.send({
-    from: 'IV Volunteers <noreply@yourdomain.com>',
-    to,
-    subject,
-    html,
-  })
-  */
-
-  return { success: true }
+    console.log("[v0] Email sent successfully:", result)
+    return { success: true, data: result }
+  } catch (error) {
+    console.error("[v0] Error sending email:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to send email",
+    }
+  }
 }
 
 export function getApplicationConfirmationEmail(data: {
