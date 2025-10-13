@@ -1,7 +1,5 @@
 import { Resend } from "resend"
 
-console.log("[v0] Email module loading - RESEND_API_KEY present:", !!process.env.RESEND_API_KEY)
-
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface SendEmailParams {
@@ -12,34 +10,21 @@ interface SendEmailParams {
 
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
   try {
-    console.log("[v0] sendEmail called with:", { to, subject, hasHtml: !!html })
-    console.log("[v0] RESEND_API_KEY available:", !!process.env.RESEND_API_KEY)
-    console.log("[v0] RESEND_API_KEY length:", process.env.RESEND_API_KEY?.length || 0)
-
     if (!process.env.RESEND_API_KEY) {
-      console.warn("[v0] RESEND_API_KEY not configured, skipping email send")
+      console.warn("RESEND_API_KEY not configured, skipping email send")
       return { success: false, error: "Email service not configured" }
     }
 
-    console.log("[v0] Attempting to send email via Resend...")
-
     const result = await resend.emails.send({
-      from: "IV Volunteers <onboarding@resend.dev>", // Resend's test domain
+      from: "IV Volunteers <onboarding@resend.dev>",
       to,
       subject,
       html,
     })
 
-    console.log("[v0] Resend API response:", JSON.stringify(result, null, 2))
-    console.log("[v0] Email sent successfully to:", to)
-
     return { success: true, data: result }
   } catch (error) {
-    console.error("[v0] Error sending email - Full error:", error)
-    console.error("[v0] Error type:", error?.constructor?.name)
-    console.error("[v0] Error message:", error instanceof Error ? error.message : String(error))
-    console.error("[v0] Error stack:", error instanceof Error ? error.stack : "No stack trace")
-
+    console.error("Error sending email:", error instanceof Error ? error.message : String(error))
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to send email",
