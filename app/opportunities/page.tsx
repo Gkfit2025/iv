@@ -3,22 +3,30 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SearchFiltersClient } from "@/components/search-filters-client"
 
+export const dynamic = "force-dynamic"
+
 export default async function OpportunitiesPage() {
-  // Fetch all active opportunities from database
-  const opportunities = await sql`
-    SELECT 
-      o.*,
-      h.id as host_id,
-      h.name as host_name,
-      h.logo as host_logo,
-      h.verified as host_verified,
-      h.rating as host_rating,
-      h.review_count as host_review_count
-    FROM public.opportunities o
-    JOIN public.host_organizations h ON o.host_organization_id = h.id
-    WHERE o.status = 'active'
-    ORDER BY o.featured DESC, o.created_at DESC
-  `
+  let opportunities = []
+  try {
+    opportunities = await sql`
+      SELECT 
+        o.*,
+        h.id as host_id,
+        h.name as host_name,
+        h.logo as host_logo,
+        h.verified as host_verified,
+        h.rating as host_rating,
+        h.review_count as host_review_count
+      FROM public.opportunities o
+      JOIN public.host_organizations h ON o.host_organization_id = h.id
+      WHERE o.status = 'active'
+      ORDER BY o.featured DESC, o.created_at DESC
+    `
+  } catch (error) {
+    console.error("[v0] Error fetching opportunities:", error)
+    // Return empty array if table doesn't exist yet
+    opportunities = []
+  }
 
   // Transform database format to component format
   const transformedOpportunities = opportunities.map((opp) => ({

@@ -3,6 +3,8 @@ import { cookies } from "next/headers"
 import { getSession } from "@/lib/auth"
 import { sql } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: NextRequest) {
   try {
     console.log("[v0] /api/auth/me - starting auth check")

@@ -8,6 +8,8 @@ import Link from "next/link"
 import { Calendar, MapPin, Building2, FileText, User } from "lucide-react"
 import { Header } from "@/components/header"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardPage() {
   console.log("[v0] Dashboard: Starting to load")
 
