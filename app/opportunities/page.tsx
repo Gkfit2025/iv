@@ -1,64 +1,50 @@
-"use client"
-
-import { useState, useMemo } from "react"
+import { sql } from "@/lib/db"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { SearchFilters, type SearchFilters as SearchFiltersType } from "@/components/search-filters"
-import { OpportunityCard } from "@/components/opportunity-card"
-import { opportunities } from "@/lib/mock-data"
+import { SearchFiltersClient } from "@/components/search-filters-client"
 
-export default function OpportunitiesPage() {
-  const [filters, setFilters] = useState<SearchFiltersType>({
-    searchTerm: "",
-    location: "",
-    themes: [],
-    applicantType: "all",
-    minDuration: 0,
-    maxDuration: 52,
-  })
+export default async function OpportunitiesPage() {
+  // Fetch all active opportunities from database
+  const opportunities = await sql`
+    SELECT 
+      o.*,
+      h.id as host_id,
+      h.name as host_name,
+      h.logo as host_logo,
+      h.verified as host_verified,
+      h.rating as host_rating,
+      h.review_count as host_review_count
+    FROM public.opportunities o
+    JOIN public.host_organizations h ON o.host_organization_id = h.id
+    WHERE o.status = 'active'
+    ORDER BY o.featured DESC, o.created_at DESC
+  `
 
-  const filteredOpportunities = useMemo(() => {
-    return opportunities.filter((opp) => {
-      // Search term filter
-      if (filters.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase()
-        const matchesSearch =
-          opp.title.toLowerCase().includes(searchLower) ||
-          opp.description.toLowerCase().includes(searchLower) ||
-          opp.location.toLowerCase().includes(searchLower)
-        if (!matchesSearch) return false
-      }
-
-      // Location filter
-      if (filters.location) {
-        const locationLower = filters.location.toLowerCase()
-        const matchesLocation =
-          opp.location.toLowerCase().includes(locationLower) || opp.country.toLowerCase().includes(locationLower)
-        if (!matchesLocation) return false
-      }
-
-      // Theme filter
-      if (filters.themes.length > 0) {
-        const hasMatchingTheme = filters.themes.some((theme) => opp.theme.includes(theme))
-        if (!hasMatchingTheme) return false
-      }
-
-      // Applicant type filter
-      if (filters.applicantType !== "all") {
-        if (!opp.applicantTypes.includes(filters.applicantType)) return false
-      }
-
-      // Duration filter
-      if (filters.minDuration > 0 && opp.maxDuration < filters.minDuration) {
-        return false
-      }
-      if (filters.maxDuration > 0 && opp.minDuration > filters.maxDuration) {
-        return false
-      }
-
-      return true
-    })
-  }, [filters])
+  // Transform database format to component format
+  const transformedOpportunities = opportunities.map((opp) => ({
+    id: opp.id,
+    hostId: opp.host_id,
+    title: opp.title,
+    description: opp.description,
+    theme: opp.theme,
+    location: opp.location,
+    country: opp.country,
+    applicantTypes: opp.applicant_types,
+    minDuration: opp.min_duration,
+    maxDuration: opp.max_duration,
+    images: opp.images,
+    requirements: opp.requirements,
+    benefits: opp.benefits,
+    featured: opp.featured,
+    host: {
+      id: opp.host_id,
+      name: opp.host_name,
+      logo: opp.host_logo,
+      verified: opp.host_verified,
+      rating: opp.host_rating,
+      reviewCount: opp.host_review_count,
+    },
+  }))
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -70,25 +56,7 @@ export default function OpportunitiesPage() {
           <p className="text-muted-foreground">Discover meaningful volunteer experiences around the world</p>
         </div>
 
-        <div className="mb-8">
-          <SearchFilters onSearch={setFilters} />
-        </div>
-
-        <div className="mb-4 text-sm text-muted-foreground">{filteredOpportunities.length} opportunities found</div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredOpportunities.map((opportunity) => (
-            <OpportunityCard key={opportunity.id} opportunity={opportunity} />
-          ))}
-        </div>
-
-        {filteredOpportunities.length === 0 && (
-          <div className="py-12 text-center">
-            <p className="text-muted-foreground">
-              No opportunities found matching your criteria. Try adjusting your filters.
-            </p>
-          </div>
-        )}
+        <SearchFiltersClient opportunities={transformedOpportunities} />
       </div>
 
       <Footer />

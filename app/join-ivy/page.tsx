@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Building2, Users, Globe, Heart, CheckCircle2 } from "lucide-react"
 
 export default function JoinIVYPage() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+
   const [formData, setFormData] = useState({
     organizationName: "",
     email: "",
@@ -22,12 +28,22 @@ export default function JoinIVYPage() {
     description: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // In MVP, this would redirect to Google Form
-    // For now, we'll just show an alert
-    alert("Thank you for your interest! We will contact you soon.")
-    console.log("[v0] Form submitted:", formData)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // For now, just show success message
+      // In the future, this could create a pending host organization request
+      setSuccess(true)
+      setTimeout(() => {
+        router.push("/auth/sign-up")
+      }, 2000)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred")
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -144,8 +160,8 @@ export default function JoinIVYPage() {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle>Apply to Join</CardTitle>
-                <CardDescription>Fill out this form and we'll get back to you within 48 hours</CardDescription>
+                <CardTitle>Express Your Interest</CardTitle>
+                <CardDescription>Fill out this form and create an account to get started</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -224,12 +240,20 @@ export default function JoinIVYPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
-                    Submit Application
+                  {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{error}</div>}
+
+                  {success && (
+                    <div className="rounded-md bg-green-50 p-3 text-sm text-green-800">
+                      Thank you for your interest! Redirecting you to create an account...
+                    </div>
+                  )}
+
+                  <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                    {isLoading ? "Submitting..." : "Continue to Sign Up"}
                   </Button>
 
                   <p className="text-center text-xs text-muted-foreground">
-                    By submitting, you agree to our terms and conditions
+                    After signing up, you can create your organization profile and start posting opportunities
                   </p>
                 </form>
               </CardContent>

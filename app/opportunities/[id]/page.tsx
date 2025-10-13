@@ -6,9 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin, Clock, Users, Star, CheckCircle2, Gift, Shield } from "lucide-react"
-import { opportunities, hostOrganizations, reviews } from "@/lib/mock-data"
 import { getSession } from "@/lib/auth"
 import { sql } from "@/lib/db"
 
@@ -17,14 +15,55 @@ export default async function OpportunityDetailPage({
 }: {
   params: { id: string }
 }) {
-  const opportunity = opportunities.find((opp) => opp.id === params.id)
+  const opportunities = await sql`
+    SELECT 
+      o.*,
+      h.id as host_id,
+      h.name as host_name,
+      h.description as host_description,
+      h.location as host_location,
+      h.logo as host_logo,
+      h.verified as host_verified,
+      h.rating as host_rating,
+      h.review_count as host_review_count
+    FROM public.opportunities o
+    JOIN public.host_organizations h ON o.host_organization_id = h.id
+    WHERE o.id = ${params.id}
+  `
 
-  if (!opportunity) {
+  if (opportunities.length === 0) {
     notFound()
   }
 
-  const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
-  const opportunityReviews = reviews.filter((r) => r.opportunityId === opportunity.id)
+  const dbOpportunity = opportunities[0]
+
+  // Transform to component format
+  const opportunity = {
+    id: dbOpportunity.id,
+    title: dbOpportunity.title,
+    description: dbOpportunity.description,
+    theme: dbOpportunity.theme,
+    location: dbOpportunity.location,
+    country: dbOpportunity.country,
+    applicantTypes: dbOpportunity.applicant_types,
+    minDuration: dbOpportunity.min_duration,
+    maxDuration: dbOpportunity.max_duration,
+    images: dbOpportunity.images,
+    requirements: dbOpportunity.requirements,
+    benefits: dbOpportunity.benefits,
+    featured: dbOpportunity.featured,
+  }
+
+  const host = {
+    id: dbOpportunity.host_id,
+    name: dbOpportunity.host_name,
+    description: dbOpportunity.host_description,
+    location: dbOpportunity.host_location,
+    logo: dbOpportunity.host_logo,
+    verified: dbOpportunity.host_verified,
+    rating: dbOpportunity.host_rating,
+    reviewCount: dbOpportunity.host_review_count,
+  }
 
   const user = await getSession()
 
@@ -48,7 +87,7 @@ export default async function OpportunityDetailPage({
         <div className="mb-8 grid gap-4 md:grid-cols-2">
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg md:col-span-2">
             <Image
-              src={opportunity.images[0] || "/placeholder.svg"}
+              src={opportunity.images[0] || "/placeholder.svg?height=600&width=800&query=volunteer opportunity"}
               alt={opportunity.title}
               fill
               className="object-cover"
@@ -58,7 +97,7 @@ export default async function OpportunityDetailPage({
           {opportunity.images.slice(1, 3).map((image, idx) => (
             <div key={idx} className="relative aspect-[4/3] overflow-hidden rounded-lg">
               <Image
-                src={image || "/placeholder.svg"}
+                src={image || "/placeholder.svg?height=400&width=600&query=volunteer work"}
                 alt={`${opportunity.title} ${idx + 2}`}
                 fill
                 className="object-cover"
@@ -101,9 +140,9 @@ export default async function OpportunityDetailPage({
             </div>
 
             {/* Host Organization */}
-            {host && (
-              <Card className="mb-6">
-                <CardContent className="flex items-center gap-4 p-6">
+            <Card className="mb-6">
+              <CardContent className="flex items-center gap-4 p-6">
+                {host.logo ? (
                   <Image
                     src={host.logo || "/placeholder.svg"}
                     alt={host.name}
@@ -111,26 +150,28 @@ export default async function OpportunityDetailPage({
                     height={64}
                     className="rounded-full"
                   />
-                  <div className="flex-1">
-                    <div className="mb-1 flex items-center gap-2">
-                      <h3 className="font-semibold">{host.name}</h3>
-                      {host.verified && (
-                        <Badge variant="secondary" className="gap-1">
-                          <Shield className="h-3 w-3" />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="mb-2 text-sm text-muted-foreground">{host.description}</p>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="h-4 w-4 fill-accent text-accent" />
-                      <span className="font-medium">{host.rating}</span>
-                      <span className="text-muted-foreground">({host.reviewCount} reviews)</span>
-                    </div>
+                ) : (
+                  <div className="h-16 w-16 rounded-full bg-muted" />
+                )}
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <h3 className="font-semibold">{host.name}</h3>
+                    {host.verified && (
+                      <Badge variant="secondary" className="gap-1">
+                        <Shield className="h-3 w-3" />
+                        Verified
+                      </Badge>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <p className="mb-2 text-sm text-muted-foreground line-clamp-2">{host.description}</p>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Star className="h-4 w-4 fill-accent text-accent" />
+                    <span className="font-medium">{host.rating.toFixed(1)}</span>
+                    <span className="text-muted-foreground">({host.reviewCount} reviews)</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Description */}
             <Card className="mb-6">
@@ -143,72 +184,39 @@ export default async function OpportunityDetailPage({
             </Card>
 
             {/* Requirements */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Requirements</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {opportunity.requirements.map((req, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                      <span>{req}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            {opportunity.requirements.length > 0 && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Requirements</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {opportunity.requirements.map((req, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                        <span>{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Benefits */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>What You'll Get</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {opportunity.benefits.map((benefit, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Gift className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* Reviews */}
-            {opportunityReviews.length > 0 && (
-              <Card>
+            {opportunity.benefits.length > 0 && (
+              <Card className="mb-6">
                 <CardHeader>
-                  <CardTitle>Reviews</CardTitle>
+                  <CardTitle>What You'll Get</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {opportunityReviews.map((review) => (
-                    <div key={review.id} className="border-b pb-4 last:border-0">
-                      <div className="mb-2 flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={review.avatar || "/placeholder.svg"} />
-                          <AvatarFallback>{review.volunteerName[0]}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{review.volunteerName}</p>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <div className="flex">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-4 w-4 ${i < review.rating ? "fill-accent text-accent" : "text-muted"}`}
-                                />
-                              ))}
-                            </div>
-                            <span>•</span>
-                            <span>{review.date}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-sm leading-relaxed">{review.comment}</p>
-                    </div>
-                  ))}
+                <CardContent>
+                  <ul className="space-y-2">
+                    {opportunity.benefits.map((benefit, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <Gift className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </CardContent>
               </Card>
             )}

@@ -1,12 +1,10 @@
-import { redirect } from "next/navigation"
+import { redirect, notFound } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ApplicationForm } from "@/components/application-form"
-import { opportunities, hostOrganizations } from "@/lib/mock-data"
-import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Clock } from "lucide-react"
 import { getSession } from "@/lib/auth"
-import { neon } from "@neondatabase/serverless"
+import { sql } from "@/lib/db"
 
 export default async function ApplyPage({ params }: { params: { id: string } }) {
   const user = await getSession()
@@ -15,19 +13,40 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
     redirect("/auth/login")
   }
 
-  const opportunity = opportunities.find((opp) => opp.id === params.id)
+  const opportunities = await sql`
+    SELECT 
+      o.*,
+      h.id as host_id,
+      h.name as host_name
+    FROM public.opportunities o
+    JOIN public.host_organizations h ON o.host_organization_id = h.id
+    WHERE o.id = ${params.id}
+  `
 
-  if (!opportunity) {
+  if (opportunities.length === 0) {
     notFound()
   }
 
-  const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
+  const dbOpportunity = opportunities[0]
 
-  const sql = neon(process.env.iv_DATABASE_URL!)
+  // Transform to component format
+  const opportunity = {
+    id: dbOpportunity.id,
+    title: dbOpportunity.title,
+    theme: dbOpportunity.theme,
+    location: dbOpportunity.location,
+    minDuration: dbOpportunity.min_duration,
+    maxDuration: dbOpportunity.max_duration,
+    applicantTypes: dbOpportunity.applicant_types,
+  }
+
+  const host = {
+    name: dbOpportunity.host_name,
+  }
 
   // Check if user has already applied
   const existingApplication = await sql`
-    SELECT id FROM applications
+    SELECT id FROM public.applications
     WHERE user_id = ${user.id}
     AND opportunity_id = ${opportunity.id}
     LIMIT 1
@@ -39,8 +58,8 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
 
   // Fetch user profile
   const profileResult = await sql`
-    SELECT * FROM profiles
-    WHERE id = ${user.id}
+    SELECT * FROM public.profiles
+    WHERE user_id = ${user.id}
     LIMIT 1
   `
   const profile = profileResult[0] || null
@@ -63,7 +82,7 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
             ))}
           </div>
           <h2 className="mb-2 text-2xl font-bold">{opportunity.title}</h2>
-          <p className="mb-4 text-muted-foreground">{host?.name}</p>
+          <p className="mb-4 text-muted-foreground">{host.name}</p>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />

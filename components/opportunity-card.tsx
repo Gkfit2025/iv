@@ -3,22 +3,40 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Star, Clock, Users } from "lucide-react"
-import type { Opportunity } from "@/lib/types"
-import { hostOrganizations } from "@/lib/mock-data"
+
+interface Opportunity {
+  id: string
+  title: string
+  description: string
+  theme: string[]
+  location: string
+  country: string
+  applicantTypes: string[]
+  minDuration: number
+  maxDuration: number
+  images: string[]
+  featured: boolean
+  host: {
+    id: string
+    name: string
+    logo: string | null
+    verified: boolean
+    rating: number
+    reviewCount: number
+  }
+}
 
 interface OpportunityCardProps {
   opportunity: Opportunity
 }
 
 export function OpportunityCard({ opportunity }: OpportunityCardProps) {
-  const host = hostOrganizations.find((h) => h.id === opportunity.hostId)
-
   return (
     <Link href={`/opportunities/${opportunity.id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
-            src={opportunity.images[0] || "/placeholder.svg"}
+            src={opportunity.images[0] || "/placeholder.svg?height=400&width=600&query=volunteer opportunity"}
             alt={opportunity.title}
             fill
             className="object-cover transition-transform group-hover:scale-105"
@@ -37,27 +55,29 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             <span className="truncate">{opportunity.location}</span>
           </div>
 
-          {host && (
-            <div className="mb-3 flex items-center gap-2">
+          <div className="mb-3 flex items-center gap-2">
+            {opportunity.host.logo ? (
               <Image
-                src={host.logo || "/placeholder.svg"}
-                alt={host.name}
+                src={opportunity.host.logo || "/placeholder.svg"}
+                alt={opportunity.host.name}
                 width={24}
                 height={24}
                 className="rounded-full"
               />
-              <span className="truncate text-sm">{host.name}</span>
-              {host.verified && (
-                <Badge variant="secondary" className="text-xs">
-                  Verified
-                </Badge>
-              )}
-            </div>
-          )}
+            ) : (
+              <div className="h-6 w-6 rounded-full bg-muted" />
+            )}
+            <span className="truncate text-sm">{opportunity.host.name}</span>
+            {opportunity.host.verified && (
+              <Badge variant="secondary" className="text-xs">
+                Verified
+              </Badge>
+            )}
+          </div>
 
           <div className="mb-3 flex flex-wrap gap-1">
             {opportunity.theme.slice(0, 3).map((theme) => (
-              <Badge key={theme} variant="outline" className="text-xs">
+              <Badge key={theme} variant="outline" className="text-xs capitalize">
                 {theme}
               </Badge>
             ))}
@@ -70,18 +90,16 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
                 {opportunity.minDuration}-{opportunity.maxDuration} weeks
               </span>
             </div>
-            {host && (
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-accent text-accent" />
-                <span className="font-medium">{host.rating}</span>
-                <span className="text-muted-foreground">({host.reviewCount})</span>
-              </div>
-            )}
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-accent text-accent" />
+              <span className="font-medium">{opportunity.host.rating.toFixed(1)}</span>
+              <span className="text-muted-foreground">({opportunity.host.reviewCount})</span>
+            </div>
           </div>
 
           <div className="mt-3 flex gap-2">
             {opportunity.applicantTypes.map((type) => (
-              <Badge key={type} variant="secondary" className="text-xs">
+              <Badge key={type} variant="secondary" className="text-xs capitalize">
                 <Users className="mr-1 h-3 w-3" />
                 {type}
               </Badge>
