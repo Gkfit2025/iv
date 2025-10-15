@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { OpportunityForm } from "@/components/opportunity-form"
 import { Header } from "@/components/header"
 
+export const dynamic = "force-dynamic"
+
 export default async function NewOpportunityPage() {
   const user = await getSession()
 
