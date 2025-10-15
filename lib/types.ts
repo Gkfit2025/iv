@@ -1,6 +1,8 @@
+import type { THEMES } from "./constants"
+
 export type ApplicantType = "volunteer" | "intern"
 
-export type Theme = "childcare" | "medical" | "wildlife" | "heritage" | "education"
+export type Theme = (typeof THEMES)[number]
 
 export interface HostOrganization {
   id: string

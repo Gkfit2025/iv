@@ -43,8 +43,18 @@ export function SearchFiltersClient({ opportunities }: SearchFiltersClientProps)
     maxDuration: 52,
   })
 
+  const handleFilterChange = (newFilters: SearchFiltersType) => {
+    console.log("[v0] Filters updated:", newFilters)
+    setFilters(newFilters)
+  }
+
   const filteredOpportunities = useMemo(() => {
-    return opportunities.filter((opp) => {
+    console.log("[v0] Filtering opportunities:", {
+      totalOpportunities: opportunities.length,
+      filters,
+    })
+
+    const filtered = opportunities.filter((opp) => {
       // Search term filter
       if (filters.searchTerm) {
         const searchLower = filters.searchTerm.toLowerCase()
@@ -84,12 +94,15 @@ export function SearchFiltersClient({ opportunities }: SearchFiltersClientProps)
 
       return true
     })
+
+    console.log("[v0] Filtered results:", filtered.length)
+    return filtered
   }, [opportunities, filters])
 
   return (
     <>
       <div className="mb-8">
-        <SearchFilters onSearch={setFilters} />
+        <SearchFilters onSearch={handleFilterChange} />
       </div>
 
       <div className="mb-4 text-sm text-muted-foreground">{filteredOpportunities.length} opportunities found</div>

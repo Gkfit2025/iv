@@ -33,6 +33,14 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
   const [maxDuration, setMaxDuration] = useState(52)
 
   const handleSearch = () => {
+    console.log("[v0] Search button clicked with filters:", {
+      searchTerm,
+      location,
+      themes: selectedThemes,
+      applicantType,
+      minDuration,
+      maxDuration,
+    })
     onSearch({
       searchTerm,
       location,
@@ -54,6 +62,9 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            id="search-term"
+            name="search"
+            autoComplete="off"
             placeholder="Search opportunities..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -75,8 +86,11 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
             <div className="mt-6 space-y-6">
               {/* Location Filter */}
               <div className="space-y-2">
-                <Label>Location</Label>
+                <Label htmlFor="location-filter">Location</Label>
                 <Input
+                  id="location-filter"
+                  name="location"
+                  autoComplete="off"
                   placeholder="City or country..."
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -107,12 +121,12 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
 
               {/* Applicant Type Filter */}
               <div className="space-y-2">
-                <Label>Applicant Type</Label>
+                <Label htmlFor="applicant-type">Applicant Type</Label>
                 <Select
                   value={applicantType}
                   onValueChange={(value) => setApplicantType(value as ApplicantType | "all")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="applicant-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -128,6 +142,9 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
                 <Label>Duration (weeks)</Label>
                 <div className="flex gap-2">
                   <Input
+                    id="min-duration"
+                    name="minDuration"
+                    autoComplete="off"
                     type="number"
                     placeholder="Min"
                     value={minDuration || ""}
@@ -135,6 +152,9 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
                     min={0}
                   />
                   <Input
+                    id="max-duration"
+                    name="maxDuration"
+                    autoComplete="off"
                     type="number"
                     placeholder="Max"
                     value={maxDuration || ""}
