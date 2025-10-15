@@ -1,14 +1,6 @@
 export type ApplicantType = "volunteer" | "intern"
 
-export type Theme =
-  | "childcare"
-  | "medical"
-  | "wildlife"
-  | "heritage"
-  | "education"
-  | "community"
-  | "environment"
-  | "arts"
+export type Theme = "childcare" | "medical" | "wildlife" | "heritage" | "education"
 
 export interface HostOrganization {
   id: string

@@ -9,6 +9,7 @@ import { Search, SlidersHorizontal } from "lucide-react"
 import type { Theme, ApplicantType } from "@/lib/types"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Checkbox } from "@/components/ui/checkbox"
+import { THEMES, THEME_LABELS } from "@/lib/constants"
 
 interface SearchFiltersProps {
   onSearch: (filters: SearchFilters) => void
@@ -22,17 +23,6 @@ export interface SearchFilters {
   minDuration: number
   maxDuration: number
 }
-
-const themes: Theme[] = [
-  "childcare",
-  "medical",
-  "wildlife",
-  "heritage",
-  "education",
-  "community",
-  "environment",
-  "arts",
-]
 
 export function SearchFilters({ onSearch }: SearchFiltersProps) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -97,7 +87,7 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
               <div className="space-y-3">
                 <Label>Themes</Label>
                 <div className="space-y-2">
-                  {themes.map((theme) => (
+                  {THEMES.map((theme) => (
                     <div key={theme} className="flex items-center space-x-2">
                       <Checkbox
                         id={theme}
@@ -106,9 +96,9 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
                       />
                       <label
                         htmlFor={theme}
-                        className="text-sm font-medium capitalize leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        {theme}
+                        {THEME_LABELS[theme]}
                       </label>
                     </div>
                   ))}
@@ -172,7 +162,7 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
         >
           All Themes
         </Button>
-        {themes.slice(0, 5).map((theme) => (
+        {THEMES.map((theme) => (
           <Button
             key={theme}
             variant={selectedThemes.includes(theme) ? "default" : "outline"}
@@ -180,7 +170,7 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
             onClick={() => toggleTheme(theme)}
             className="capitalize"
           >
-            {theme}
+            {THEME_LABELS[theme]}
           </Button>
         ))}
       </div>

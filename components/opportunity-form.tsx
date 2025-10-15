@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
 import type { Theme, ApplicantType } from "@/lib/types"
+import { THEMES, THEME_LABELS } from "@/lib/constants"
 
 interface Opportunity {
   id: string
@@ -32,17 +33,6 @@ interface Opportunity {
 interface OpportunityFormProps {
   opportunity?: Opportunity | null
 }
-
-const themes: Theme[] = [
-  "childcare",
-  "medical",
-  "wildlife",
-  "heritage",
-  "education",
-  "community",
-  "environment",
-  "arts",
-]
 
 export function OpportunityForm({ opportunity }: OpportunityFormProps) {
   const router = useRouter()
@@ -250,15 +240,15 @@ export function OpportunityForm({ opportunity }: OpportunityFormProps) {
         <h3 className="text-lg font-semibold">Themes *</h3>
         <p className="text-sm text-muted-foreground">Select all themes that apply to this opportunity</p>
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-          {themes.map((theme) => (
+          {THEMES.map((theme) => (
             <div key={theme} className="flex items-center space-x-2">
               <Checkbox
                 id={`theme-${theme}`}
                 checked={formData.theme.includes(theme)}
                 onCheckedChange={() => toggleTheme(theme)}
               />
-              <label htmlFor={`theme-${theme}`} className="text-sm font-medium capitalize leading-none">
-                {theme}
+              <label htmlFor={`theme-${theme}`} className="text-sm font-medium leading-none">
+                {THEME_LABELS[theme]}
               </label>
             </div>
           ))}
