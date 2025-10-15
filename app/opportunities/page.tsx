@@ -22,6 +22,7 @@ export default async function OpportunitiesPage() {
       WHERE o.status = 'active'
       ORDER BY o.featured DESC, o.created_at DESC
     `
+    console.log(`[v0] Fetched ${opportunities.length} opportunities from database`)
   } catch (error) {
     console.error("[v0] Error fetching opportunities:", error)
     // Return empty array if table doesn't exist yet
@@ -53,6 +54,8 @@ export default async function OpportunitiesPage() {
       reviewCount: opp.host_review_count,
     },
   }))
+
+  console.log(`[v0] Transformed ${transformedOpportunities.length} opportunities for display`)
 
   return (
     <div className="min-h-screen flex flex-col">
