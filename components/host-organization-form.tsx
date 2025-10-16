@@ -39,6 +39,8 @@ export function HostOrganizationForm({ user, organization }: HostOrganizationFor
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
+  const organizationRating = organization?.rating ? Number(organization.rating) : 0
+
   const [formData, setFormData] = useState({
     name: organization?.name || "",
     description: organization?.description || "",
@@ -182,7 +184,7 @@ export function HostOrganizationForm({ user, organization }: HostOrganizationFor
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Rating:</span>
-              <span className="font-medium">{(Number(organization.rating) || 0).toFixed(1)} / 5.0</span>
+              <span className="font-medium">{organizationRating.toFixed(1)} / 5.0</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Reviews:</span>
