@@ -182,7 +182,7 @@ export function HostOrganizationForm({ user, organization }: HostOrganizationFor
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Rating:</span>
-              <span className="font-medium">{organization.rating.toFixed(1)} / 5.0</span>
+              <span className="font-medium">{(Number(organization.rating) || 0).toFixed(1)} / 5.0</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Reviews:</span>

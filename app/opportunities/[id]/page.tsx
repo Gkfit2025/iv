@@ -166,7 +166,7 @@ export default async function OpportunityDetailPage({
                   <p className="mb-2 text-sm text-muted-foreground line-clamp-2">{host.description}</p>
                   <div className="flex items-center gap-1 text-sm">
                     <Star className="h-4 w-4 fill-accent text-accent" />
-                    <span className="font-medium">{host.rating.toFixed(1)}</span>
+                    <span className="font-medium">{(Number(host.rating) || 0).toFixed(1)}</span>
                     <span className="text-muted-foreground">({host.reviewCount} reviews)</span>
                   </div>
                 </div>

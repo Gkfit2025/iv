@@ -92,7 +92,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-accent text-accent" />
-              <span className="font-medium">{opportunity.host.rating.toFixed(1)}</span>
+              <span className="font-medium">{(Number(opportunity.host.rating) || 0).toFixed(1)}</span>
               <span className="text-muted-foreground">({opportunity.host.reviewCount})</span>
             </div>
           </div>
