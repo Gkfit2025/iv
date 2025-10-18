@@ -23,6 +23,17 @@ export default async function OpportunitiesPage() {
       ORDER BY o.featured DESC, o.created_at DESC
     `
     console.log(`[v0] Fetched ${opportunities.length} opportunities from database`)
+    if (opportunities.length > 0) {
+      console.log("[v0] First opportunity raw data:", {
+        id: opportunities[0].id,
+        title: opportunities[0].title,
+        images: opportunities[0].images,
+        images_type: typeof opportunities[0].images,
+        images_length: opportunities[0].images?.length,
+        host_logo: opportunities[0].host_logo,
+        host_logo_type: typeof opportunities[0].host_logo,
+      })
+    }
   } catch (error) {
     console.error("[v0] Error fetching opportunities:", error)
     // Return empty array if table doesn't exist yet
@@ -54,6 +65,15 @@ export default async function OpportunitiesPage() {
       reviewCount: opp.host_review_count,
     },
   }))
+
+  if (transformedOpportunities.length > 0) {
+    console.log("[v0] First transformed opportunity:", {
+      id: transformedOpportunities[0].id,
+      title: transformedOpportunities[0].title,
+      images: transformedOpportunities[0].images,
+      host_logo: transformedOpportunities[0].host.logo,
+    })
+  }
 
   console.log(`[v0] Transformed ${transformedOpportunities.length} opportunities for display`)
 
