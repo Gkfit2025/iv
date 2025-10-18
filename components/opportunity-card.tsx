@@ -31,6 +31,10 @@ interface OpportunityCardProps {
 }
 
 export function OpportunityCard({ opportunity }: OpportunityCardProps) {
+  console.log("[v0] OpportunityCard - images array:", opportunity.images)
+  console.log("[v0] OpportunityCard - first image:", opportunity.images[0])
+  console.log("[v0] OpportunityCard - host logo:", opportunity.host.logo)
+
   return (
     <Link href={`/opportunities/${opportunity.id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
@@ -92,7 +96,6 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-accent text-accent" />
-              {/* Safely convert rating to number before calling toFixed */}
               <span className="font-medium">{Number(opportunity.host.rating).toFixed(1)}</span>
               <span className="text-muted-foreground">({opportunity.host.reviewCount})</span>
             </div>
